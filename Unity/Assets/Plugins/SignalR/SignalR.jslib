@@ -14,7 +14,7 @@ var SignalRLib = {
         handlerCallback7: null,
         handlerCallback8: null,
         UTF8ToString: function (arg) {
-            return (typeof Pointer_stringify === 'undefined') ? UTF8ToString(arg) : Pointer_stringify(arg);
+            return (typeof UTF8ToString === 'undefined') ? Pointer_stringify(arg) : UTF8ToString(arg);
         },
         invokeCallback: function (args, callback) {
             var sig = 'v';
