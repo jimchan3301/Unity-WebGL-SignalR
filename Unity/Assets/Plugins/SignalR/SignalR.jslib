@@ -187,6 +187,16 @@ var SignalRLib = {
         }
     },
 
+    InvokeBinaryJs: function (methodName, dataPtr, length) {
+        methodName = vars.UTF8ToString(methodName);
+        // Create Uint8Array from pointer and length
+        var data = new Uint8Array(HEAPU8.buffer, dataPtr, length);
+        vars.connection.invoke(methodName, data)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+    },
+
     OnJs: function (methodName, argCount, callback) {
         methodName = vars.UTF8ToString(methodName);
         argCount = Number.parseInt(vars.UTF8ToString(argCount));

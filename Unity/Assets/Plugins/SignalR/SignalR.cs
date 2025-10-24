@@ -145,6 +145,12 @@ public class SignalR
         await connection.InvokeAsync(methodName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     public async void Invoke(string methodName, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6, object arg7, object arg8, object arg9, object arg10) =>
         await connection.InvokeAsync(methodName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    
+    // Binary data specific invoke methods
+    public async void InvokeBinary(string methodName, byte[] binaryData)
+    {
+        await connection.InvokeAsync(methodName, binaryData);
+    }
     #endregion
 
     #region On Editor
@@ -213,7 +219,10 @@ public class SignalR
     #region Invoke JS
     [DllImport("__Internal")]
     private static extern void InvokeJs(string methodName, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6, string arg7, string arg8, string arg9, string arg10);
-
+    
+    [DllImport("__Internal")]
+    private static extern void InvokeBinaryJs(string methodName, IntPtr dataPtr, int length);
+    
     public void Invoke(string methodName, object arg1) =>
         InvokeJs(methodName, arg1.ToString(), null, null, null, null, null, null, null, null, null);
     public void Invoke(string methodName, object arg1, object arg2) =>
@@ -234,6 +243,15 @@ public class SignalR
         InvokeJs(methodName, arg1.ToString(), arg2.ToString(), arg3.ToString(), arg4.ToString(), arg5.ToString(), arg6.ToString(), arg7.ToString(), arg8.ToString(), arg9.ToString(), null);
     public void Invoke(string methodName, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6, object arg7, object arg8, object arg9, object arg10) =>
         InvokeJs(methodName, arg1.ToString(), arg2.ToString(), arg3.ToString(), arg4.ToString(), arg5.ToString(), arg6.ToString(), arg7.ToString(), arg8.ToString(), arg9.ToString(), arg10.ToString());
+    
+    // Binary data specific invoke methods for WebGL
+    public unsafe void InvokeBinary(string methodName, byte[] binaryData)
+    {
+        fixed (byte* ptr = binaryData)
+        {
+            InvokeBinaryJs(methodName, (IntPtr)ptr, binaryData.Length);
+        }
+    }
     #endregion
 
     #region On JS
